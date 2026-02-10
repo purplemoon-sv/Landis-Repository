@@ -1,1 +1,1 @@
-I am a student at BCIT Meford inside the Engineering Acedemy. I enjoy space, and numerous other sciences.
+I am a student inside the engineering program. I enjoy space, and numerous other sciences.
