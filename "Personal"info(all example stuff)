@@ -1,0 +1,9 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    cout << "My name is John Doe" << endl << "My address is 123 Example Avenue with a zip code of 00000." << endl << "My phone number is 123-456-7890" << endl << "My college major is engineering.";
+    return 0;
+    //All info is fake, I am not responsible to any charges for calling or mailing to these addresses.
+}
