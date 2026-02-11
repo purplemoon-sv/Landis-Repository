@@ -1,0 +1,19 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int gallonsPerTank = 20;
+    int avgTownMPG = 23.5;
+    int avgHighwayMPG = 28.9;
+    //Average Miles Per Gallon
+    int distanceTown;
+    int distanceHighway;
+    // Distance
+    distanceTown = gallonsPerTank * avgTownMPG;
+    distanceHighway = gallonsPerTank * avgHighwayMPG;
+    //Math
+    cout << "The amount of distance you can cover on one full tank in the town is " << distanceTown << " miles and the distance you cover on the highway is " << distanceHighway << " miles";
+    //Return
+    return 0;
+}
