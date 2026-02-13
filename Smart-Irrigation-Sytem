@@ -1,0 +1,43 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    // Defining Pins
+    int RelayPin = 3; // Connect relay signal pin to to digital pin 3
+    int MoistureSensorPin = A0; // Connect the sensor OUT pin to analog pin A0
+    int moistureValue; // Variable to store the sensor value
+    int threshold = 400; // Adjust value based on sensor calibration 
+
+    void setup() 
+    {
+        // Initialize Serial Monitor for Debugging
+        Serial.begin(9600);
+        // Set relay pin as output
+        pinMode(RelayPin, OUTPUT);
+        // Turn off pump initially (Relay module may be active low, so HIGH turns it OFF)
+        digitalWrite(RelayPin, HIGH);
+    }
+    void loop()
+    {
+        // Read value from moisture sensor
+        moistureValue = analogRead(MoistureSensorPin);
+        Serial.print("Soil Moisture Value: ");
+        Serial.println(moistureValue);
+        
+        // Check if moisture is below threshold
+        if (moistureValue < threshold) {
+            // Soil is dry, turn pump ON (LOW signal for active-low relays)
+            digitalWrite(RelayPin, LOW);
+            Serial.println("Pump ON - Watering the plant");
+        } else {
+            // Soil is wet enough, turn pump OFF (HIGH signal for active-low relays)
+            digitalWrite(RelayPin, HIGH);
+            Serial.println("Pump OFF - Soil is moist enough");
+        }
+
+        // Add a delay before next reading
+        delay(2000); // Wait for next two seconds
+    }
+    return 0;
+}
