@@ -5,6 +5,7 @@ int main()
 {
     int gallons = 15;
     int milesLeft = 375;
+    int milesPerGallon = 0;
     //Data for calculation
     int milesPerGallon = milesLeft / gallons;
     //Math
