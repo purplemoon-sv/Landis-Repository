@@ -5,11 +5,10 @@ int main()
 {
     int gallons = 15;
     int milesLeft = 375;
-    int milesPerGallon = 0;
     //Data for calculation
     int milesPerGallon = milesLeft / gallons;
-    //Math
-    cout << "The amount of gallons your car uses per mile is " << milesPerGallon;
+    //Miles Per Gallon equals miles left divided by gallons
+    cout << "The amount of miles your car travels per gallon is " << milesPerGallon;
     //Shown to the User
     return 0;
 }
