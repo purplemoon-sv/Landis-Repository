@@ -1,0 +1,54 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    cout << "This program gives you all details you need for monthly expenses of a car." << endl;
+    
+    /* Variables to store inputs: loan principal, monthly insurance cost, gas cost, 
+    oil cost, tire cost, maintenence cost*/
+    float loanPrin;
+    float monthlyInsurCost;
+    float gasCost;
+    float oilCost;
+    float tiresCost;
+    float maintCost;
+    
+    // Variable to store total
+    float total = 0;
+    
+    // Input and Output of loan principal
+    cout << "Please input the money you paid on your car loan: ";
+    cin >> loanPrin;
+    cout << endl;
+    
+    // Input and Output of the monthly insurance cost
+    cout << "Please input your monthly insurance cost: ";
+    cin >> monthlyInsurCost;
+    cout << endl;
+    
+    // Input and Output of the gas costs
+    cout << "Please input the amount of money you spent on gas this month: ";
+    cin >> gasCost;
+    cout << endl;
+    
+    // Input and Output of the oil costs
+    cout << "Please input the amount of money you spent on oil this month: ";
+    cin >> oilCost;
+    cout << endl;
+    
+    // Input and Output of the tire costs
+    cout << "Please input the amount of money you spent on tires this month: ";
+    cin >> tiresCost;
+    cout << endl;
+    
+    // Input and Output of the maintenence costs
+    cout << "Please input the amount of money you spent on maintenence this month: ";
+    cin >> maintCost;
+    cout << endl;
+    
+    // Output and calculations of total costs
+    total = loanPrin + monthlyInsurCost + gasCost + oilCost + tiresCost+ maintCost;
+    cout << "The amount of money you spent this month is: $" << total;
+    return 0;
+}
