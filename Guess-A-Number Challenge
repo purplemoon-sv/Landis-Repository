@@ -1,0 +1,51 @@
+#include <iostream>
+#include <ctime>
+using namespace std;
+
+int main() {
+    
+    /* This program will make a random number and then the User will try to 
+    guess it, then it will provide a higher or lower statement if wrong */
+    cout << "Welcome to the guess-a-number game!\nI will pick a number between 1 and 100, and you will guess it.\nI will then tell you if your guess was higher or lower.\n";
+    
+    // Random Number Creation and storing into variable randomNum
+    srand(time(0));
+    int randomNum = rand() % 101;
+    
+    // Variable for guess
+    int guess = 0;
+    
+    // Variable to count attempt number
+    int attempt = 0;
+    
+    // Constant to limit usable attempts
+    const int maxAttempts = 10;
+    
+    // Begin Loop of guesses (and actual game)
+    do {
+        // User inputs their guesses
+        cout << "\nAttempt " << (attempt + 1) << " - Enter your guess!\n";
+        cin >> guess;
+        attempt++;
+        
+        // If correct, end program
+        if (guess == randomNum) {
+            cout << "You got it right!";
+            return 0;
+            
+        // If wrong, higher or lower?    
+        } else {
+            
+                // If guess was higher than random number
+                if (guess > randomNum) {
+                    cout << "Too high! Guess lower.";
+                // If guess was lower than random number
+                } else if (guess < randomNum) {
+                    cout << "Too low! Guess higher.";
+                }
+        }
+    // End loop (and program) when all attempts used
+    } while (attempt < maxAttempts);
+    
+    return 0;
+}
