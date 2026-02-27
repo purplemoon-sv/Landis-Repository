@@ -46,6 +46,7 @@ int main() {
         }
     // End loop (and program) when all attempts used
     } while (attempt < maxAttempts);
+    cout << "\nYou Lose! The number was: " << randomNum;
     
     return 0;
 }
