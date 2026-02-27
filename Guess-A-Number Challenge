@@ -1,52 +1,60 @@
 #include <iostream>
 #include <ctime>
+#include <string>
+#include <sstream>
+
 using namespace std;
 
 int main() {
-    
-    /* This program will make a random number and then the User will try to 
-    guess it, then it will provide a higher or lower statement if wrong */
-    cout << "Welcome to the guess-a-number game!\nI will pick a number between 1 and 100, and you will guess it.\nI will then tell you if your guess was higher or lower.\n";
-    
-    // Random Number Creation and storing into variable randomNum
+    // Random Number generator
     srand(time(0));
     int randomNum = rand() % 101;
     
-    // Variable for guess
+    // Variable for storing what the user inputs
     int guess = 0;
-    
-    // Variable to count attempt number
+
+    // Variable for storing how many attempts have been made
     int attempt = 0;
-    
-    // Constant to limit usable attempts
+
+    // Constant for defining the maximum amount of guesses
     const int maxAttempts = 10;
-    
-    // Begin Loop of guesses (and actual game)
+
+    cout << "Welcome to the Guess-A-Number game!\nI will pick a number between 1 and 100.\n";
+
+    // Main game loop
     do {
-        // User inputs their guesses
-        cout << "\nAttempt " << (attempt + 1) << " - Enter your guess!\n";
-        cin >> guess;
-        attempt++;
+        cout << "\nAttempt " << (attempt + 1) << " - Enter your guess: ";
         
-        // If correct, end program
-        if (guess == randomNum) {
-            cout << "You got it right!";
-            return 0;
-            
-        // If wrong, higher or lower?    
-        } else {
-            
-                // If guess was higher than random number
-                if (guess > randomNum) {
-                    cout << "Too high! Guess lower.";
-                // If guess was lower than random number
-                } else if (guess < randomNum) {
-                    cout << "Too low! Guess higher.";
-                }
+        /* Read the entire line of input as a string. 
+        This prevents "10 + 5" from being treated as two separate guesses. */
+        string input;
+        getline(cin, input); 
+        
+        // Use stringstream to extract the first number found in the string
+        stringstream ss(input);
+        if (!(ss >> guess)) { 
+            // If no number could be extracted (e.g., user typed "abc")
+            cout << "Invalid input! Please enter a number.";
+            continue; // Restart the loop without counting an attempt
         }
-    // End loop (and program) when all attempts used
+
+        // Valid number found, increment attempt counter
+        attempt++;
+
+        // Check the guess against the random number
+        if (guess == randomNum) {            
+            cout << "You got it right!";
+            return 0; // Exit program on success
+        } else if (guess > randomNum) {
+            cout << "Too high! Guess lower.\n";
+            cout << "You guessed: " << guess;
+        } else {
+            cout << "Too low! Guess higher.\n";
+            cout << "You guessed: " << guess;
+        }
+
     } while (attempt < maxAttempts);
-    cout << "\nYou Lose! The number was: " << randomNum;
-    
-    return 0;
+
+    // If the loop finishes without a correct guess
+    cout << "\nYou Lose! The number was: " << randomNum;    return 0;
 }
