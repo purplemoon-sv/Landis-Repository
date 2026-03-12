@@ -1,0 +1,95 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+#include <limits>
+#include <string>
+#include <sstream>
+using namespace std;
+
+// Defining Funct for user input
+void take_input (double& tempF, double& windSpeed, double& dewPoint);
+
+// Defining Funct for calculating variable "windChill"
+void calculate_windChill (double& tempF, double& windSpeed, float& windChill);
+
+// Defining Funct for calculating variable "cloudBase"
+void calculate_cloudBase (double& tempF, double& dewPoint, float& cloudBase);
+
+// Defining Funct for outputing results
+void show_output (double& tempF, double& windSpeed, float& windChill, float& cloudBase);
+
+// Helper function to validate a single numeric entry per line
+bool isValidNumeric(double& value) {
+    string line;
+    getline(cin, line);
+    stringstream ss(line);
+    char extra;
+    // Try to extract a double; check if anything extra remains in the stream
+    if (ss >> value && !(ss >> extra)) {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    cout << " ---------------------------\n";
+    cout << "|                           |\n";
+    cout << "|  This program calculates  |\n";
+    cout << "| Wind chill and cloud base |\n";
+    cout << "|                           |\n";
+    cout << " ---------------------------\n";
+    
+    /* Defining variables for all info, temp in °F, wind speed in MPH, dewPoint
+    in °F, wind chill in °F, and cloud base height in ft*/
+    double tempF, windSpeed, dewPoint;
+    float windChill, cloudBase;
+    
+    // Begin Functions
+    take_input(tempF, windSpeed, dewPoint);
+    calculate_windChill (tempF, windSpeed, windChill);
+    calculate_cloudBase (tempF, dewPoint, cloudBase);
+    show_output (tempF, windSpeed, windChill, cloudBase);
+    return 0;
+    // End Process
+}
+
+// Input Funct
+void take_input(double& tempF, double& windSpeed, double& dewPoint) {
+    // Validate Temperature
+    cout << "Enter temperature no more than 50° and no less than -50° (°F): ";
+    while (!isValidNumeric(tempF) || tempF >  50 || tempF < -50) {
+        cout << "Invalid input. Enter a something less than or equal to 50°, and no less than -50° (°F): ";
+    }
+
+    // Validate Wind Speed
+    cout << "Enter wind speed (MPH): ";
+    while (!isValidNumeric(windSpeed) || windSpeed < 3) {
+        cout << "Invalid input. Enter a wind speed greater than 3: ";
+    }
+
+    // Validate Dew Point
+    cout << "Enter dew point (F): ";
+    while (!isValidNumeric(dewPoint) || dewPoint > tempF) {
+        if (dewPoint > tempF) 
+            cout << "Dew point cannot be higher than temperature. Enter again: ";
+        else 
+            cout << "Invalid input. Enter a single numeric value: ";
+    }
+}
+
+// Calculate Wind Chill in °F
+void calculate_windChill (double& tempF, double& windSpeed, float& windChill) {
+    windChill = ((35.74 + (0.6215*tempF)) - (35.75*(pow(windSpeed, .16))) + (0.4275*tempF*(pow(windSpeed, .16))));
+}
+
+// Calculate Cloud Base Height in ft
+void calculate_cloudBase (double& tempF, double& dewPoint, float& cloudBase) {
+    cloudBase = (1000 * ((tempF - dewPoint)/4.4));
+}
+
+// Output Funct
+void show_output (double& tempF, double& windSpeed, float& windChill, float& cloudBase) {
+    cout << endl << "Temperature  |  Wind Speed  |  Wind Chill  | Cloud Base\n";
+    cout << "-------------------------------------------------------\n";
+    cout << tempF << " (°F) | " << windSpeed << " MPH |  " << windChill << " (°F) | " << cloudBase << " ft";
+}
