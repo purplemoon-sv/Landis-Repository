@@ -10,10 +10,10 @@ using namespace std;
 void take_input (double& tempF, double& windSpeed, double& dewPoint);
 
 // Defining Funct for calculating variable "windChill"
-void calculate_windChill (double& tempF, double& windSpeed, float& windChill);
+float calculate_windChill (double& tempF, double& windSpeed, float& windChill);
 
 // Defining Funct for calculating variable "cloudBase"
-void calculate_cloudBase (double& tempF, double& dewPoint, float& cloudBase);
+float calculate_cloudBase (double& tempF, double& dewPoint, float& cloudBase);
 
 // Defining Funct for outputting results
 void show_output (double& tempF, double& windSpeed, float& windChill, float& cloudBase);
@@ -83,13 +83,15 @@ bool isValidNumeric(double& value) {
 }
 
 // Calculate Wind Chill in °F
-void calculate_windChill (double& tempF, double& windSpeed, float& windChill) {
+float calculate_windChill (double& tempF, double& windSpeed, float& windChill) {
     windChill = ((35.74 + (0.6215*tempF)) - (35.75*(pow(windSpeed, .16))) + (0.4275*tempF*(pow(windSpeed, .16))));
+    return 0;
 }
 
 // Calculate Cloud Base Height in ft
-void calculate_cloudBase (double& tempF, double& dewPoint, float& cloudBase) {
+float calculate_cloudBase (double& tempF, double& dewPoint, float& cloudBase) {
     cloudBase = (1000 * ((tempF - dewPoint)/4.4));
+    return 0;
 }
 
 // Output Funct
