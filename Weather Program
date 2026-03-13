@@ -15,21 +15,11 @@ void calculate_windChill (double& tempF, double& windSpeed, float& windChill);
 // Defining Funct for calculating variable "cloudBase"
 void calculate_cloudBase (double& tempF, double& dewPoint, float& cloudBase);
 
-// Defining Funct for outputing results
+// Defining Funct for outputting results
 void show_output (double& tempF, double& windSpeed, float& windChill, float& cloudBase);
 
-// Helper function to validate a single numeric entry per line
-bool isValidNumeric(double& value) {
-    string line;
-    getline(cin, line);
-    stringstream ss(line);
-    char extra;
-    // Try to extract a double; check if anything extra remains in the stream
-    if (ss >> value && !(ss >> extra)) {
-        return true;
-    }
-    return false;
-}
+// Defining Funct to validate a single numeric entry per line
+bool isValidNumeric(double& value);
 
 int main() {
     cout << " ---------------------------\n";
@@ -41,11 +31,12 @@ int main() {
     
     /* Defining variables for all info, temp in °F, wind speed in MPH, dewPoint
     in °F, wind chill in °F, and cloud base height in ft*/
-    double tempF, windSpeed, dewPoint;
+    double tempF, windSpeed, dewPoint, value;
     float windChill, cloudBase;
     
     // Begin Functions
     take_input(tempF, windSpeed, dewPoint);
+    isValidNumeric(value);
     calculate_windChill (tempF, windSpeed, windChill);
     calculate_cloudBase (tempF, dewPoint, cloudBase);
     show_output (tempF, windSpeed, windChill, cloudBase);
@@ -62,7 +53,7 @@ void take_input(double& tempF, double& windSpeed, double& dewPoint) {
     }
 
     // Validate Wind Speed
-    cout << "Enter wind speed (MPH): ";
+    cout << "Enter wind speed greater than 3 (MPH): ";
     while (!isValidNumeric(windSpeed) || windSpeed < 3) {
         cout << "Invalid input. Enter a wind speed greater than 3: ";
     }
@@ -75,6 +66,20 @@ void take_input(double& tempF, double& windSpeed, double& dewPoint) {
         else 
             cout << "Invalid input. Enter a single numeric value: ";
     }
+    cout << "Press Enter one last time to get results";
+}
+
+// Funct for Validating Input
+bool isValidNumeric(double& value) {
+    string line;
+    getline(cin, line);
+    stringstream ss(line);
+    char extra;
+    // Try to extract a double; check if anything extra remains in the stream
+    if (ss >> value && !(ss >> extra)) {
+        return true;
+    }
+    return false;
 }
 
 // Calculate Wind Chill in °F
