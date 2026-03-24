@@ -1,0 +1,223 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+using namespace std;
+
+
+// Intro Function
+void intro();
+
+// Input Validation Function
+bool isValidNumeric(int& value);
+
+// Input Function for Colorblindness, asks for father and mother color vision
+void isColorB(int& father, int& mother);
+
+// Output Function based on user inputs of colorblindness, outputs punnett
+void punnettOutput(int& father, int& mother);
+
+
+// Asks user to repeat processes (Yes or No)
+void repeatYorN(int& repeat);
+
+int main() {
+    
+    /* Variables for 'value' - user input, then stored that input stored in 
+    'father' or 'mother'*/
+    int value, father, mother;
+    
+    // Repeat variable for final repeat function '1' means repeat (base value).
+    int repeat = 1;
+    
+    // Loop process until user inputs '2' into repeat
+    do {
+        
+        // Calling process
+        intro();
+        isValidNumeric(value);
+        isColorB(father, mother);
+        punnettOutput(father, mother);
+        repeatYorN(repeat);
+    } while (repeat == 1);
+
+    return 0;
+}
+
+void intro() {
+    cout << " --------------------------------------\n";
+    cout << "| This program calculates the chance   |\n";
+    cout << "| your children will be colorblind     |\n";
+    cout << "| based on the punnett square chances. |\n";
+    cout << "|                                      |\n";
+    cout << "| Press Enter to start the program     |\n";
+    cout << " --------------------------------------\n";
+}
+
+bool isValidNumeric(int& value) {
+    
+    // Creates a Variable named 'line'
+    string line;
+    
+    // Obtains input from user stores that in 'line'
+    getline(cin, line);
+    
+    // Check how long 'line' string is
+    stringstream ss(line);
+    
+    // Check for extra characters after initial value (for ex 2'+2')
+    char extra;
+    
+    // Try to extract an int; check if anything extra remains in the stream
+    if (ss >> value && !(ss >> extra)) {
+        
+        // Input valid
+        return true;
+    }
+    
+    // Input invalid
+    return false;
+}
+
+void isColorB(int& father, int& mother) {
+    
+    // Ask if the father is colorblind then store input in 'father'
+    cout << "Is the father colorblind?\n";
+    cout << "1) No\n";
+    cout << "2) Yes\n\n";
+    
+    // Validation (refers back to the isValidNumeric for every input)
+    while (!isValidNumeric(father) || father > 2 || father < 1) {
+        cout << "Invalid input. Enter '1' or '2': ";
+    }
+    
+    // Ask if the mother is colorblind then store the input in 'mother'
+    cout << "\nIs the mother colorblind?\n";
+    cout << "1) No\n";
+    cout << "2) Yes\n";
+    cout << "3) Silent Carrier\n\n";
+    
+    // Validation
+    while (!isValidNumeric(mother) || father > 3 || father < 1) {
+        cout << "Invalid input. Enter '1', '2', or '3': ";
+    }
+}
+
+void punnettOutput(int& father, int& mother) {
+    
+    // If neither are colorblind
+    if (father == 1 && mother ==1) {
+        
+        // Punnett Genotypes
+        cout << "       ---------------\n";
+        cout << "      |   X   |   Y   |\n";
+        cout << " ---------------------\n";
+        cout << "|  X  |  X X  |  X Y  |\n";
+        cout << " ---------------------\n";
+        cout << "|  X  |  X X  |  X Y  |\n";
+        cout << " ---------------------\n\n";
+        
+        // Phenotypes
+        cout << "The chance your sons are color normal: 100%\n";
+        cout << "The chance your sons are color blind: 0%\n";
+        cout << "The chance your daughter are color normal: 100%\n";
+        cout << "The chance your daughters are colorblind: 0%\n";
+        cout << "The chance your daughters are silent carriers: 0%\n\n";
+    } else if (father == 1 && mother == 2) /*If father is not and mother is*/ { 
+        // Punnett Genotypes
+        cout << "        -----------------\n";
+        cout << "       |   X    |   Y    |\n";
+        cout << " ------------------------\n";
+        cout << "|  Xc  |  X Xc  |  Xc Y  |\n";
+        cout << " ------------------------\n";
+        cout << "|  Xc  |  X Xc  |  Xc Y  |\n";
+        cout << " ------------------------\n\n";
+        
+        // Phenotypes
+        cout << "The chance your sons are color normal: 0%\n";
+        cout << "The chance your sons are color blind: 100%\n";
+        cout << "The chance your daughter are color normal: 0%\n";
+        cout << "The chance your daughters are colorblind: 0%\n";
+        cout << "The chance your daughters are silent carriers: 100%\n\n";
+    } else if (father == 1 && mother == 3) /*If father is not and mother is silent carrier*/ {
+        
+        // Punnet Genotypes
+        cout << "        -----------------\n";
+        cout << "       |   X    |   Y    |\n";
+        cout << " ------------------------\n";
+        cout << "|  X   |  X X   |  X  Y  |\n";
+        cout << " ------------------------\n";
+        cout << "|  Xc  |  X Xc  |  Xc Y  |\n";
+        cout << " ------------------------\n\n";
+        
+        // Phenotypes
+        cout << "The chance your sons are color normal: 50%\n";
+        cout << "The chance your sons are color blind: 50%\n";
+        cout << "The chance your daughter are color normal: 50%\n";
+        cout << "The chance your daughters are colorblind: 0%\n";
+        cout << "The chance your daughters are silent carriers: 50%\n\n";
+    } else if (father == 2 && mother == 1) /*If father is and mother is not*/ {
+        
+        // Punnet Genotypes
+        cout << "       ----------------\n";
+        cout << "      |   Xc   |   Y   |\n";
+        cout << " ----------------------\n";
+        cout << "|  X  |  X Xc  |  X Y  |\n";
+        cout << " ----------------------\n";
+        cout << "|  X  |  X Xc  |  X Y  |\n";
+        cout << " ----------------------\n\n";
+        
+        // Phenotypes
+        cout << "The chance your sons are color normal: 100%\n";
+        cout << "The chance your sons are color blind: 0%\n";
+        cout << "The chance your daughter are color normal: 0%\n";
+        cout << "The chance your daughters are colorblind: 0%\n";
+        cout << "The chance your daughters are silent carriers: 100%\n\n";
+    } else if (father == 2 && mother == 2) /*If both are colorblind*/ {
+        
+        // Punnett Genotypes
+        cout << "        ------------------\n";
+        cout << "       |   Xc    |   Y    |\n";
+        cout << " -------------------------\n";
+        cout << "|  Xc  |  Xc Xc  |  Xc Y  |\n";
+        cout << " -------------------------\n";
+        cout << "|  Xc  |  Xc Xc  |  Xc Y  |\n";
+        cout << " -------------------------\n\n";
+        
+        // Phenotypes
+        cout << "The chance your sons are color normal: 0%\n";
+        cout << "The chance your sons are color blind: 100%\n";
+        cout << "The chance your daughter are color normal: 0%\n";
+        cout << "The chance your daughters are colorblind: 100%\n";
+        cout << "The chance your daughters are silent carriers: 0%\n\n";
+    } else /*If father is and mother is silent carrier*/ {
+        
+        // Punnett Genotypes
+        cout << "        ------------------\n";
+        cout << "       |   Xc    |   Y    |\n";
+        cout << " -------------------------\n";
+        cout << "|  X   |  X Xc   |  X Y   |\n";
+        cout << " -------------------------\n";
+        cout << "|  Xc  |  Xc Xc  |  Xc Y  |\n";
+        cout << " -------------------------\n\n";
+        
+        // Phenotypes
+        cout << "The chance your sons are color normal: 50%\n";
+        cout << "The chance your sons are color blind: 50%\n";
+        cout << "The chance your daughter are color normal: 0%\n";
+        cout << "The chance your daughters are colorblind: 50%\n";
+        cout << "The chance your daughters are silent carriers: 50%\n\n";   
+    }
+}
+
+void repeatYorN(int& repeat) {
+    
+    // Repeat (Yes or no)
+    cout << "Would you like to run another sim?\n";
+    cout << "1) Yes\n";
+    cout << "2) No\n\n";
+    
+    // Validation
+    while (!isValidNumeric(repeat) || repeat > 2 || repeat < 1) {
+        cout << "Invalid input. Enter '1' or '2': ";
+    }
+}
