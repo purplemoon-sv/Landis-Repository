@@ -1,0 +1,475 @@
+#include <iostream>
+#include <ctime>
+#include <cstdlib>
+#include <string>
+#include <sstream>
+#include <clocale>
+
+using namespace std;
+
+// Class to represent a single playing card in the deck
+class card {
+public:
+	string face;
+	string symbol;
+	bool isPlayed = false;
+
+	void printCard() {
+		cout << face << " of " << symbol;
+	}
+
+	int getValue() {
+		if (face == "Ace") return 14;
+		if (face == "King") return 13;
+		if (face == "Queen") return 12;
+		if (face == "Jack") return 11;
+		if (face == "Ten") return 10;
+		if (face == "Nine") return 9;
+		if (face == "Eight") return 8;
+		if (face == "Seven") return 7;
+		if (face == "Six") return 6;
+		if (face == "Five") return 5;
+		if (face == "Four") return 4;
+		if (face == "Three") return 3;
+		if (face == "Two") return 2;
+		return 0;
+	}
+
+	void printCardArt() {
+		string rank;
+		if (face == "Ace") rank = "A";
+		else if (face == "Ten") rank = "10";
+		else if (face == "Jack") rank = "J";
+		else if (face == "Queen") rank = "Q";
+		else if (face == "King") rank = "K";
+		else rank = (face == "Two" ? "2" : face == "Three" ? "3" : face == "Four" ? "4" : face == "Five" ? "5" : face == "Six" ? "6" : face == "Seven" ? "7" : face == "Eight" ? "8" : "9");
+
+		string pad = (rank == "10") ? "" : " ";
+		cout << ".-----------.\n";
+		cout << "| " << rank << pad << "        |\n";
+		cout << "|           |\n";
+		cout << "|           |\n";
+		cout << "|     " << symbol << "     |\n";
+		cout << "|           |\n";
+		cout << "|           |\n";
+		cout << "|        " << pad << rank << " |\n";
+		cout << "'-----------'\n";
+	}
+};
+
+// Global Variables
+card deck[52]; // The master deck containing all 52 card objects
+int numPlayers = 5; // Total number of participants (1 Human + 4 Bots)
+int numHumans = 1; // Tracks how many human players are in the game
+int cardsPerHand = 6; // Constant defining how many cards are dealt per round
+int currentCard = 0; // Pointer used during the dealing process to track deck position
+int currentStarter = 0; // Tracks the index (0-4) of the player who leads the next trick
+int scores[5] = {30, 30, 30, 30, 30}; // Players start with 30 points; reaching 0 results in elimination
+string names[5]; // Names array
+
+// Defining title card function
+void intro();
+
+// Defining the validation function
+bool isValidNumeric(int& value);
+
+// Defining the menu function
+void gameMenu();
+
+// Defining the function to populate the deck with cards
+void makeDeck();
+
+// Defining the function of shuffling
+void shuffle();
+
+// Defining the function to distribute cards to players
+void makeHands();
+
+// Defining the rounds function
+void playGame();
+
+int main() {
+	setlocale(LC_ALL, "");
+	srand(time(0));
+
+	intro();
+	gameMenu();
+
+	bool gameOver = false;
+	while (!gameOver) {
+		currentCard = 0;
+		for (int i = 0; i < 52; i++) deck[i].isPlayed = false;
+
+		makeDeck();
+		shuffle();
+		makeHands();
+
+		playGame();
+
+		int activePlayers = 0;
+		int lastPlayerStanding = -1;
+
+		cout << "\n----------- STANDINGS -----------\n";
+		for (int i = 0; i < numPlayers; i++) {
+			if (scores[i] > 0) {
+				cout << names[i] << ": " << scores[i] << " points\n";
+				activePlayers++;
+				lastPlayerStanding = i;
+			} else {
+				cout << names[i] << ": ELIMINATED\n";
+			}
+		}
+		cout << "---------------------------------\n";
+
+		if (activePlayers <= 1) {
+			cout << "\n*** GAME OVER ***\n";
+			if (lastPlayerStanding != -1) cout << names[lastPlayerStanding] << " IS THE WINNER!\n";
+			else cout << "Everyone was eliminated! It's a draw.\n";
+			gameOver = true;
+		} else {
+			cout << "\nPress Enter for next round...";
+			string dummy;
+			getline(cin, dummy);
+		}
+	}
+	return 0;
+}
+
+void intro() {
+	cout << ".------------------------------------------.\n";
+	cout << "|                                          |\n";
+	cout << "|  GGGGG   UU  UU  RRRRR   KK   KK   AAAA  |\n";
+	cout << "| GG   GG  UU  UU  RR  RR  KK  KK   AA  AA |\n";
+	cout << "| GG       UU  UU  RR RR   KKKKK    AA  AA |\n";
+	cout << "| GG  GGG  UU  UU  RRRR    KK  KK   AAAAAA |\n";
+	cout << "| GG   GG  UU  UU  RR RR   KK   KK  AA  AA |\n";
+	cout << "|  GGGGG    UUUU   RR  RR  KK   KK  AA  AA |\n";
+	cout << "|                                          |\n";
+	cout << "|    A     Swedish   Card    Game          |\n";
+	cout << "|                                          |\n";
+	cout << "'------------------------------------------'\n";
+	cout << "Press enter to begin the Game\n";
+	string dummy;
+	getline(cin, dummy);
+}
+
+// Validates that the user input is a clean integer with no trailing characters or letters
+bool isValidNumeric(int& value) {
+	string line;
+	// Read the entire line of input to prevent leftover characters in the buffer
+	getline(cin, line);
+
+	stringstream ss(line);
+	char extra;
+
+	// Check if the input is successfully converted to an integer
+	// AND ensure there is no "extra" content (like "12abc") following the number
+	if (ss >> value && !(ss >> extra)) {
+		return true; // Input is a perfectly valid integer
+	}
+
+	return false; // Input was either non-numeric or contained invalid trailing characters
+}
+
+void gameMenu() {
+	int menu = 0;
+
+	// 1. Display Menu and get valid choice
+	cout << "Welcome to Gurka\n1. Play vs Bots\n2. Local Co-op\n3. View Rules\nChoice: ";
+	while (!isValidNumeric(menu) || menu < 1 || menu > 3) {
+		cout << "Invalid. Enter 1, 2, or 3: ";
+	}
+
+	if (menu == 3) {
+		cout << ".------------------------.\n";
+		cout << "|                        |\n";
+		cout << "| Every player starts    |\n";
+		cout << "| with 30 points         |\n";
+		cout << "|                        |\n";
+		cout << "| Every player is dealt  |\n";
+		cout << "| 6 cards                |\n";
+		cout << "|                        |\n";
+		cout << "| First player plays a   |\n";
+		cout << "| card                   |\n";
+		cout << "|                        |\n";
+		cout << "| Second player must     |\n";
+		cout << "| play something higher  |\n";
+		cout << "|                        |\n";
+		cout << "| If they can't, they    |\n";
+		cout << "| must play their lowest |\n";
+		cout << "| card                   |\n";
+		cout << "|                        |\n";
+		cout << "| Then, player three     |\n";
+		cout << "| does the same as       |\n";
+		cout << "| player two but based   |\n";
+		cout << "| on player 2's card     |\n";
+		cout << "|                        |\n";
+		cout << "| The winner of the      |\n";
+		cout << "| stack is determined    |\n";
+		cout << "| based on whoever       |\n";
+		cout << "| played the highest     |\n";
+		cout << "| card, they go first    |\n";
+		cout << "| next stack             |\n";
+		cout << "|                        |\n";
+		cout << "| The round continues    |\n";
+		cout << "| until all players have |\n";
+		cout << "| one card left          |\n";
+		cout << "|                        |\n";
+		cout << "| The losers subract the |\n";
+		cout << "| values from their      |\n";
+		cout << "| score (see point sheet |\n";
+		cout << "| at bottom) winners do  |\n";
+		cout << "| not                    |\n";
+		cout << "|                        |\n";
+		cout << "| The game repeats until |\n";
+		cout << "| one is left, when a    |\n";
+		cout << "| player gets to zero    |\n";
+		cout << "| points they are        |\n";
+		cout << "| eliminated             |\n";
+		cout << "|                        |\n";
+		cout << "| Ace is 14, King is 13  |\n";
+		cout << "| Queen is 12 Jack is 11 |\n";
+		cout << "| Numbers are value on   |\n";
+		cout << "| card                   |\n";
+		cout << "|                        |\n";
+		cout << "'------------------------'\n\n";
+		gameMenu(); // Return to menu after rules
+		return;
+	}
+
+    // 3. Setup Players based on Mode
+    if (menu == 2) {
+        cout << "How many human players (2-5)? ";
+        while (!isValidNumeric(numHumans) || numHumans < 2 || numHumans > 5) {
+            cout << "Invalid. Enter 2-5: ";
+        }
+        numPlayers = numHumans;
+    } else {
+        // Mode 1: Play vs Bots
+        numHumans = 1;
+        numPlayers = 5; 
+    }
+
+    // 4. Assign Names with Uniqueness Check
+    for (int i = 0; i < numPlayers; i++) {
+        bool unique = false;
+        while (!unique) {
+            if (i < numHumans) {
+                cout << "Enter name for Player " << i + 1 << ": ";
+            } else {
+                cout << "Enter name for Bot " << i + 1 << ": ";
+            }
+            
+            string inputName;
+            getline(cin, inputName);
+            
+            // Default name if empty
+            if (inputName.empty()) {
+                inputName = (i < numHumans ? "Player " : "Bot ") + to_string(i + 1);
+            }
+
+            // Check if this name already exists in the array
+            unique = true; // Assume it's unique until proven otherwise
+            for (int j = 0; j < i; j++) {
+                if (names[j] == inputName) {
+                    cout << "Error: The name '" << inputName << "' is already taken! Please enter a different name.\n";
+                    unique = false;
+                    break;
+                }
+            }
+
+            // If it passed the check, save it
+            if (unique) {
+                names[i] = inputName;
+            }
+        }
+    }
+}
+
+// Populates the deck array with 52 unique cards (4 suits, 13 ranks each)
+void makeDeck() {
+	// Arrays containing the human-readable names of card ranks and the Unicode symbols for suits
+	string face[] = {"Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
+	string symbol[] = {"\u2663", "\u2665", "\u2666", "\u2660"}; // Club, Heart, Diamond, Spade
+
+	int l = 0; // Index pointer for the master deck array
+
+	// Outer loop iterates through each of the 4 suits
+	for (int i = 0; i < 4; i++) {
+		// Inner loop iterates through each of the 13 ranks
+		for (int j = 0; j < 13; j++) {
+			// Assign the face string and suit symbol to the current card object
+			deck[l].face = face[j];
+			deck[l].symbol = symbol[i];
+			l++; // Move to the next card slot in the deck
+		}
+	}
+}
+
+
+// Shuffles the deck using random indices to ensure a unique card order for each round
+void shuffle() {
+	// Iterate through every card in the standard 52-card deck
+	for (int n = 0; n < 52; n++) {
+		// Pick a random index between 0 and 51
+		int m = rand() % 52;
+
+		// Swap the card at the current position (n) with the card at the random position (m)
+		card temp = deck[n];
+		deck[n] = deck[m];
+		deck[m] = temp;
+	}
+}
+
+void makeHands() {
+    for (int p = 0; p < numHumans; p++) {
+        if (scores[p] > 0) {
+            cout << "\n" << names[p] << ", press Enter to see your hand...";
+            string dummy;
+            getline(cin, dummy);
+
+            cout << "Your Hand: \n";
+            for (int c = 0; c < cardsPerHand; c++) {
+                cout << c + 1 << ": ";
+                deck[p * cardsPerHand + c].printCard();
+                cout << "\n";
+            }
+            cout << "\nPress Enter to hide hand for next player...";
+            getline(cin, dummy);
+            for(int i = 0; i < 50; i++) cout << "\n";
+        }
+    }
+}
+
+// Core gameplay loop for the round
+void playGame() {
+    // Find the first active player to start
+    while (scores[currentStarter] <= 0) {
+        currentStarter = (currentStarter + 1) % numPlayers;
+    }
+
+    for (int stack = 1; stack <= cardsPerHand; stack++) {
+        bool isLastStack = (stack == cardsPerHand);
+
+        cout << "\n==========================================";
+        if (isLastStack) cout << "\n*** FINAL STACK (Lowest Wins!) ***";
+        else cout << "\nSTACK " << stack;
+        cout << "\n==========================================\n";
+
+        int highestValueInStack = 0;
+        int targetValue = isLastStack ? 99 : -1;
+        int stackWinner = currentStarter;
+        int playedValues[5] = {0};
+        bool firstActiveInStack = true;
+
+        for (int i = 0; i < numPlayers; i++) {
+            int p = (currentStarter + i) % numPlayers;
+            if (scores[p] <= 0) continue;
+
+            int currentPlayedValue = 0;
+            int startIdx = p * cardsPerHand;
+
+            if (p < numHumans) {
+                // --- HUMAN PLAYER TURN ---
+                cout << "\n--- " << names[p] << "'s Turn ---"; // UPDATED: Uses custom name
+                if (!firstActiveInStack) cout << "\nTo beat: " << highestValueInStack;
+
+                int lowestInHandIdx = -1;
+                bool canBeat = false;
+
+                // Determine playable cards based on rules
+                for (int j = 0; j < cardsPerHand; j++) {
+                    int cardIdx = startIdx + j;
+                    if (deck[cardIdx].isPlayed) continue;
+                    if (lowestInHandIdx == -1 || deck[cardIdx].getValue() < deck[lowestInHandIdx].getValue()) lowestInHandIdx = cardIdx;
+                    if (firstActiveInStack || deck[cardIdx].getValue() >= highestValueInStack) canBeat = true;
+                }
+
+                for (int j = 0; j < cardsPerHand; j++) {
+                    int cardIdx = startIdx + j;
+                    if (!deck[cardIdx].isPlayed) {
+                        bool isPlayable = firstActiveInStack || (canBeat && deck[cardIdx].getValue() >= highestValueInStack) || (!canBeat && cardIdx == lowestInHandIdx);
+                        cout << "\n" << j + 1 << ": " << deck[cardIdx].face << " of " << deck[cardIdx].symbol;
+                        if (isPlayable) cout << " **[PLAYABLE]**";
+                    }
+                }
+
+                int choice;
+                bool valid = false;
+                while (!valid) {
+                    cout << "\nPick card index: ";
+                    if (isValidNumeric(choice) && choice >= 1 && choice <= cardsPerHand && !deck[startIdx + choice - 1].isPlayed) {
+                        int chosenIdx = startIdx + choice - 1;
+                        int chosenVal = deck[chosenIdx].getValue();
+                        bool isPlayable = firstActiveInStack || (canBeat && chosenVal >= highestValueInStack) || (!canBeat && chosenIdx == lowestInHandIdx);
+
+                        if (isPlayable) {
+                            deck[chosenIdx].isPlayed = true;
+                            currentPlayedValue = chosenVal;
+                            deck[chosenIdx].printCardArt();
+                            valid = true;
+                        } else cout << "Rule violation! You must beat the high card or play your lowest.";
+                    } else cout << "Invalid input.";
+                }
+            } else {
+                // --- BOT TURN ---
+                int bestWinningIdx = -1, highestInHandIdx = -1, lowestIdx = -1;
+                for (int j = 0; j < cardsPerHand; j++) {
+                    int cardIdx = startIdx + j;
+                    if (deck[cardIdx].isPlayed) continue;
+                    if (lowestIdx == -1 || deck[cardIdx].getValue() < deck[lowestIdx].getValue()) lowestIdx = cardIdx;
+                    if (highestInHandIdx == -1 || deck[cardIdx].getValue() > deck[highestInHandIdx].getValue()) highestInHandIdx = cardIdx;
+                    if (firstActiveInStack || deck[cardIdx].getValue() >= highestValueInStack) {
+                        if (bestWinningIdx == -1 || deck[cardIdx].getValue() < deck[bestWinningIdx].getValue()) bestWinningIdx = cardIdx;
+                    }
+                }
+                int playIdx = firstActiveInStack ? highestInHandIdx : (bestWinningIdx != -1 ? bestWinningIdx : lowestIdx);
+                if (isLastStack) playIdx = lowestIdx;
+
+                deck[playIdx].isPlayed = true;
+                currentPlayedValue = deck[playIdx].getValue();
+                cout << "\n" << names[p] << " plays:\n"; // UPDATED: Uses custom name
+                deck[playIdx].printCardArt();
+            }
+
+            playedValues[p] = currentPlayedValue;
+            
+            // Stack winner determination
+            if (isLastStack) {
+                if (currentPlayedValue <= targetValue) {
+                    targetValue = currentPlayedValue;
+                    stackWinner = p;
+                }
+            } else {
+                if (currentPlayedValue >= targetValue) {
+                    targetValue = currentPlayedValue;
+                    stackWinner = p;
+                }
+            }
+            if (currentPlayedValue > highestValueInStack) highestValueInStack = currentPlayedValue;
+            firstActiveInStack = false;
+        }
+
+        currentStarter = stackWinner;
+
+        if (isLastStack) {
+            cout << "\n==========================================";
+            cout << "\nROUND OVER - FINAL SCORING";
+            cout << "\n==========================================\n";
+            cout << names[stackWinner] << " won the final stack and loses 0 points!\n\n"; // UPDATED
+
+            for (int p = 0; p < numPlayers; p++) {
+                if (scores[p] <= 0) continue;
+                if (p != stackWinner) {
+                    scores[p] -= playedValues[p];
+                    if (scores[p] < 0) scores[p] = 0;
+                    cout << names[p] << " lost " << playedValues[p] << " points. New Total: " << scores[p] << "\n"; // UPDATED
+                } else {
+                    cout << names[p] << " (Winner) maintains: " << scores[p] << "\n"; // UPDATED
+                }
+            }
+        } else {
+            cout << "\n>>> " << names[stackWinner] << " wins this stack! <<<\n"; // UPDATED
+        }
+    }
+}
