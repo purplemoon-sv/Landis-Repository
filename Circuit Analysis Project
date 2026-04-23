@@ -1,0 +1,133 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// input validation
+
+void clearInput() {
+    cin.clear();
+    cin.ignore(10000, '\n');
+}
+
+// Get a valid integer
+int getResistorCount() {
+    int value;
+    while (true) {
+        cout << "Enter number of resistors: ";
+        cin >> value;
+
+        if (cin.fail()) {
+            cout << "Invalid input.\n";
+            clearInput();
+        } else {
+            return value;
+        }
+    }
+}
+
+// Get a valid positive double
+double getPositiveDouble(const string& prompt) {
+    double value;
+    while (true) {
+        cout << prompt;
+        cin >> value;
+
+        if (cin.fail() || value <= 0) {
+            cout << "Invalid input. Enter a value greater than 0.\n";
+            clearInput();
+        } else {
+            return value;
+        }
+    }
+}
+
+// Get resistor values
+vector<double> getResistors(int n) {
+    vector<double> resistors;
+    for (int i = 1; i <= n; i++) {
+        resistors.push_back(getPositiveDouble("Enter resistance R" + to_string(i) + ": "));
+    }
+    return resistors;
+}
+
+// Calculations
+
+// Calculates the total resistance for the series circuit
+double totalResistanceSeries(const vector<double>& resistors) {
+    double total = 0;
+    for (double r : resistors) total += r;
+    return total;
+}
+
+// Calculates the total resistance in the parallel circuit
+double totalResistanceParallel(const vector<double>& resistors) {
+    double sum = 0;
+    for (double r : resistors) {
+        if (r == 0) return 0;
+        sum += 1.0 / r;
+    }
+    return (sum == 0) ? 0 : 1.0 / sum;
+}
+
+// Calculates the current for the series circuit
+double calculateSeriesCurrent(double voltage, double totalResistance) {
+    if (totalResistance == 0) return 0;
+    return voltage / totalResistance;
+}
+
+// Calculates Voltage at each resistor
+vector<double> voltageDropsSeries(const vector<double>& resistors, double current) {
+    vector<double> drops;
+    for (double r : resistors) {
+        drops.push_back(current * r);
+    }
+    return drops;
+}
+
+// Calculates Ampage at each resistor 
+vector<double> currentsParallel(const vector<double>& resistors, double voltage) {
+    vector<double> currents;
+    for (double r : resistors) {
+        currents.push_back((r == 0) ? 0 : voltage / r);
+    }
+    return currents;
+}
+
+// output
+void displayResults(double seriesR, double parallelR, const vector<double>& vDrops, const vector<double>& currents) {
+    cout << "\n--- Results ---\n";
+    // Displays total resistance for the series circuit, and Voltage at each resistor
+    cout << "Total Resistance (Series): " << seriesR << " ohms\n";
+    cout << "Voltage Drops (Series):\n";
+    for (size_t i = 0; i < vDrops.size(); i++) {
+        cout << "R" << i + 1 << ": " << vDrops[i] << " V\n";
+    }
+
+    // Displays total resistance for the parallel circuit, and Ampage at each resistor
+    cout << "\nTotal Resistance (Parallel): " << parallelR << " ohms\n";
+    cout << "Currents (Parallel):\n";
+    for (size_t i = 0; i < currents.size(); i++) {
+        cout << "R" << i + 1 << ": " << currents[i] << " A\n";
+    }
+}
+
+// main
+int main() {
+    // Resistor Variables
+    int n = getResistorCount();
+    vector<double> resistors = getResistors(n);
+    // And voltage input
+    double voltage = getPositiveDouble("Enter total voltage: ");
+
+    // defines that each variable equals a function results
+    double seriesR = totalResistanceSeries(resistors);
+    double current = calculateSeriesCurrent(voltage, seriesR);
+    vector<double> vDrops = voltageDropsSeries(resistors, current);
+    double parallelR = totalResistanceParallel(resistors);
+    vector<double> currents = currentsParallel(resistors, voltage);
+    
+    // Final Displayed results
+    displayResults(seriesR, parallelR, vDrops, currents);
+
+    return 0;
+}
