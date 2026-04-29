@@ -48,6 +48,7 @@ void selectionSort(int array[], int size) {
         minIndex = startScan;
         minValue = array[startScan];
 
+        // Scans the entire list, then sorts via the selection sort, iterates until sorted
         for (int index = startScan + 1; index < size; index++) {
             if (array[index] < minValue) {
                 minValue = array[index];
@@ -66,7 +67,8 @@ int binarySearch(const int array[], int size, int value) {
         middle,
         position = -1;
     bool found = false;
-
+    
+    // Until target is found, iterates through cutting the sorted list in half, until target found
     while (!found && first <= last) {
         middle = (first + last) / 2;
         if (array[middle] == value) {
@@ -78,5 +80,6 @@ int binarySearch(const int array[], int size, int value) {
             first = middle + 1;
         }
     }
+    // Stores the flagged position for displaying in main
     return position;
 }
