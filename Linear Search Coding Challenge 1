@@ -1,33 +1,44 @@
 #include <iostream>
 using namespace std;
 
+// Linear Search Function definition
 int searchList(const int[], int, int);
+
+// Global Variable for Array Size
 const int SIZE = 18;
 
 int main(){
+    // All accounts in the list
     int accounts[SIZE] = {5658845, 4520125, 7895122, 8777541, 8451277, 1302850,
                           8080152, 4562555, 5552012, 5050552, 7825877, 1250255,
                           1005231, 6545231, 3852085, 7576651, 7881200, 4581002};
+    // Variable to display results
     int results;
+    // User inputed Target account
     int target;
+
+    // Asks user to input what account they want to find
     cout << "Enter the 7-digit account number you wish to find: ";
     cin >> target;
 
+    // Call for linear search function
     results = searchList(accounts, SIZE, target);
 
+    // If account not found, display this error
     if (results == -1) {
         cout << "Could not find account number " << target << ".\n";
-    } else {
+    } else { // If account was found, display where
         cout << "Account " << target << " found at position " << (results+1) << " in the list.\n";
     }
     return 0;
 }
-
+// Linear Search Function
 int searchList(const int list[], int numElems, int value) {
     int index = 0;
     int position = -1;
     bool found = false;
 
+    // While target not found iterate through list
     while (index < numElems && !found) {
         if (list[index] == value) {
             found = true;
@@ -35,5 +46,6 @@ int searchList(const int list[], int numElems, int value) {
         }
         index++;
     }
+    // Save the flagged position for displaying in main
     return position;
 }
