@@ -1,0 +1,82 @@
+#include <iostream>
+using namespace std;
+
+// Selection Sort Function definition
+void selectionSort(int[], int);
+
+// Binary Sort Function definition
+int binarySearch(const int[], int, int);
+
+// Global constant for the size of the array
+const int SIZE = 18;
+
+// Beginning primary main
+int main() {
+    // All Accounts registered in the list
+    int accounts[SIZE] = {5658845, 4520125, 7895122, 8777541, 8451277, 1302850,
+                          8080152, 4562555, 5552012, 5050552, 7825877, 1250255,
+                          1005231, 6545231, 3852085, 7576651, 7881200, 4581002};
+    // Variable for results
+    int results;
+    // Variable for the target account the user inputs
+    int target;
+
+    // Sort the array
+    selectionSort(accounts, SIZE);
+
+    // Ask user for which account they are searching for
+    cout << "Enter the 7-digit account number you wish to find: ";
+    cin >> target;
+
+    // Call the binary search function
+    results = binarySearch(accounts, SIZE, target);
+
+    // If the account doesn't exist, send user error
+    if (results == -1) {
+        cout << "Could not find account number " << target << ".\n";
+    } else { // Otherwise output where the account was found
+        cout << "Account " << target << " found at position " << (results + 1) << " in the sorted list.\n";
+    }
+    return 0;
+}
+
+// Selection Sort Function
+void selectionSort(int array[], int size) {
+    int startScan, minIndex, minValue;
+
+    for (startScan = 0; startScan < (size - 1); startScan++) {
+        minIndex = startScan;
+        minValue = array[startScan];
+
+        for (int index = startScan + 1; index < size; index++) {
+            if (array[index] < minValue) {
+                minValue = array[index];
+                minIndex = index;
+            }
+        }
+        array[minIndex] = array[startScan];
+        array[startScan] = minValue;
+    }
+}
+
+// Binary Search Function
+int binarySearch(const int array[], int size, int value) {
+    int first = 0,
+        last = size - 1,
+        middle,
+        position = -1;
+    bool found = false;
+
+    while (!found && first <= last) {
+        middle = (first + last) / 2;
+        if (array[middle] == value) {
+            found = true;
+            position = middle;
+        } else if (array[middle] > value) {
+            last = middle - 1;
+        } else {
+            first = middle + 1;
+        }
+    }
+    return position;
+}
