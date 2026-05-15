@@ -1,3 +1,5 @@
+/* Kiosk Inventory System for small components
+processes and stores inventory for the shop small electrical components*/
 #include <iostream>
 #include <vector>
 #include <string>
@@ -178,6 +180,7 @@ void inventoryFull(const vector<string>& rLabels, const vector<int>& rStock,
     else if (choice == 9) { labels = &brLabels; stock = &brStock; title = "BREADBOARD"; }
     else { cout << "Invalid choice." << endl; return; }
 
+//gives the user the introduction to the program
     cout << "\n--- " << title << " INVENTORY ---" << endl;
     cout << left << setw(25) << "PART NAME" << "STOCK LEVEL" << endl;
     cout << "------------------------------------------" << endl;
@@ -186,6 +189,7 @@ void inventoryFull(const vector<string>& rLabels, const vector<int>& rStock,
     }
 }
 
+//the kiosk system
 void kioskSystem(const vector<string>& rLabels, vector<int>& rStock, 
                  const vector<string>& cLabels, vector<int>& cStock,
                  const vector<string>& lLabels, vector<int>& lStock,
@@ -201,6 +205,7 @@ void kioskSystem(const vector<string>& rLabels, vector<int>& rStock,
     cout << "Selection: ";
     cin >> category;
 
+//allow the user to select a category 
     if (category == 1) processTransaction(rLabels, rStock, "Resistor");
     else if (category == 2) processTransaction(cLabels, cStock, "Capacitor");
     else if (category == 3) processTransaction(lLabels, lStock, "LED");
@@ -210,36 +215,41 @@ void kioskSystem(const vector<string>& rLabels, vector<int>& rStock,
     else if (category == 7) processTransaction(bsLabels, bsStock, "Button/Switch");
     else if (category == 8) processTransaction(bLabels, bStock, "Battery");
     else if (category == 9) processTransaction(brLabels, brStock, "Breadboard");
-    else cout << "Invalid category selection." << endl;
+    else cout << "Invalid category selection." << endl;  //user can’t select a category that doesn’t apply
 }
 
+//process and edits inventory
 void processTransaction(const vector<string>& labels, vector<int>& stock, string typeName) {
     string partName;
     int action, quantity;
 
+//select the most specific part that the user is trying to take out
     cout << "Enter " << typeName << " name: ";
     cin.ignore();
     getline(cin, partName);
 
+//search for the part
     string searchLower = toLower(partName);
     auto it = find_if(labels.begin(), labels.end(), [&](const string& s) {
         return toLower(s) == searchLower;
     });
 
+//if the part is found
     if (it != labels.end()) {
         int index = distance(labels.begin(), it);
         cout << "Part Found: " << *it << " | Current Stock: " << stock[index] << endl;
-        cout << "1. Check-out (Remove)\n2. Check-in (Add)\nSelection: ";
-        cin >> action;
-        cout << "Enter quantity: ";
+        cout << "1. Check-out (Remove)\n2. Check-in (Add)\nSelection: "; //does the user want to take something out or return something
+        cin >> action; 
+        cout << "Enter quantity: "; //asks the user for how many parts are being returned or taken
         cin >> quantity;
 
+//updates stock after user takes a part
         if (action == 1) {
             if (stock[index] >= quantity) {
                 stock[index] -= quantity;
-                cout << "Success! New stock: " << stock[index] << endl;
+                cout << "Success! New stock: " << stock[index] << endl; //updates stock
             } else {
-                cout << "Error: Insufficient stock available." << endl;
+                cout << "Error: Insufficient stock available." << endl; //tells the user we’re out
             }
         } else if (action == 2) {
             stock[index] += quantity;
@@ -248,6 +258,6 @@ void processTransaction(const vector<string>& labels, vector<int>& stock, string
             cout << "Invalid action." << endl;
         }
     } else {
-        cout << "Part '" << partName << "' not found." << endl;
+        cout << "Part '" << partName << "' not found." << endl; //tells the user that they gave an invalid part name
     }
 }
