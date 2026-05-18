@@ -1,24 +1,18 @@
 /* Kiosk Inventory System for small components
-processes and stores inventory for the shop small electrical components*/
+processes and stores inventory for the shop’s small electrical components*/
+
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <iomanip>
-#include <cctype>
 
 using namespace std;
 
-// Helper for case-insensitive search
-string toLower(string s) {
-    transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return tolower(c); });
-    return s;
-}
-
-// Intro function definition
+// Displays the main menu and stores the user's selection
 void intro(int& menuInput);
 
-void inventoryFull(const vector<string>& rLabels, const vector<int>& rStock, 
+// Displays the full inventory of a specific part when user asks
+void inventoryFull(const vector<string>& rLabels, const vector<int>& rStock,
                    const vector<string>& cLabels, const vector<int>& cStock,
                    const vector<string>& lLabels, const vector<int>& lStock,
                    const vector<string>& icLabels, const vector<int>& icStock,
@@ -28,7 +22,8 @@ void inventoryFull(const vector<string>& rLabels, const vector<int>& rStock,
                    const vector<string>& bLabels, const vector<int>& bStock,
                    const vector<string>& brLabels, const vector<int>& brStock);
 
-void kioskSystem(const vector<string>& rLabels, vector<int>& rStock, 
+// Takes in user input for which category they will add/remove from
+void kioskSystem(const vector<string>& rLabels, vector<int>& rStock,
                  const vector<string>& cLabels, vector<int>& cStock,
                  const vector<string>& lLabels, vector<int>& lStock,
                  const vector<string>& icLabels, vector<int>& icStock,
@@ -38,119 +33,128 @@ void kioskSystem(const vector<string>& rLabels, vector<int>& rStock,
                  const vector<string>& bLabels, vector<int>& bStock,
                  const vector<string>& brLabels, vector<int>& brStock);
 
+// Processes the change in stock and saves that to the stock
 void processTransaction(const vector<string>& labels, vector<int>& stock, string typeName);
 
 int main() {
-    int menuInput;
-    
-    // 1. Resistors
-    vector<string> resistors = {"1 ohm", "1.2 ohm", "1.5 ohm", "1.8 ohm", 
-    "2.2 ohm", "2.7 ohm", "3.3 ohm", "3.9 ohm", "4.7 ohm", "5.6 ohm", "6.8 ohm",
-    "8.2 ohm", "10 ohm", "12 ohm", "15 ohm", "18 ohm", "22 ohm", "27 ohm", 
-    "33 ohm", "39 ohm", "47 ohm", "56 ohm", "68 ohm", "82 ohm", "100 ohm", 
-    "120 ohm", "150 ohm", "180 ohm", "200 ohm", "220 ohm", "270 ohm", "300 ohm",
-    "330 ohm", "390 ohm", "470 ohm", "560 ohm", "620 ohm", "680 ohm", "820 ohm",
-    "1k ohm", "1.2k ohm", "1.5k ohm", "1.8k ohm", "2.2k ohm", "2.7k ohm", 
-    "3.3k ohm", "3.9k ohm", "4.7k ohm", "5.6k ohm", "6.8k ohm", "8.2k ohm", 
-    "10k ohm", "12k ohm", "15k ohm", "18k ohm", "22k ohm", "27k ohm", "33k ohm",
-    "39k ohm", "47k ohm", "56k ohm", "68k ohm", "75k ohm", "82k ohm", 
-    "100k ohm", "120k ohm", "150k ohm", "180k ohm", "220k ohm", "270k ohm", 
-    "330k ohm", "390k ohm", "470k ohm", "560k ohm", "680k ohm", "820k ohm", 
-    "1M ohm","4.7M ohm","10M ohm", "22M ohm"};
-    
-    vector<int> Rstock = {64, 98, 98, 100, 82, 100, 87, 90, 98, 91, 93, 81, 
-    59, 95, 83, 87, 91, 82, 261, 79, 143, 23, 81, 75, 24, 18, 519, 450, 31, 26, 
-    459, 214, 595, 23, 357, 359, 266, 26, 35, 43, 390, 62, 255, 353, 291, 306, 
-    103, 428, 275, 225, 194, 223, 64, 71, 1, 279, 350, 87, 118, 92, 295, 93, 86,
-    114, 82, 253, 92, 169, 90, 75, 90, 386, 75, 216, 94, 103, 92, 92, 1, 7, 37};
+	int menuInput;
 
-    // 2. Capacitors
-    vector<string> capacitors = {"474k Radial", "105K Radial", "102K Radial",
-    "224K Radial", "104K Radial", "473K Radial", "103K Radial", "101K Radial",
-    ".1 J Radial", ".47 Micro F", "1 Micro F", "220 Micro F", "4.7 Micro F  Ax",
-    "4.7 Micro F","330 Micro F","470 Micro F","22 Micro F", "10 Micro F", 
-    "4700 Micro F", "47 Micro F", "1000 Micro F", "2200 Micro F", 
-    "100 Micro F Ax", "33 Micro F", "100 Micro F"};
-    
-    vector<int> Cstock = {25, 91, 149, 7, 2, 14, 14, 2, 2, 379, 203, 17, 111, 
-    253, 0, 47, 946, 700, 0, 481, 31, 38, 2, 308, 271};
+	// Category 1: Resistors
+	vector<string> resistors = {"1 ohm", "1.2 ohm", "1.5 ohm", "1.8 ohm",
+	                            "2.2 ohm", "2.7 ohm", "3.3 ohm", "3.9 ohm", "4.7 ohm", "5.6 ohm", "6.8 ohm",
+	                            "8.2 ohm", "10 ohm", "12 ohm", "15 ohm", "18 ohm", "22 ohm", "27 ohm",
+	                            "33 ohm", "39 ohm", "47 ohm", "56 ohm", "68 ohm", "82 ohm", "100 ohm",
+	                            "120 ohm", "150 ohm", "180 ohm", "200 ohm", "220 ohm", "270 ohm", "300 ohm",
+	                            "330 ohm", "390 ohm", "470 ohm", "560 ohm", "620 ohm", "680 ohm", "820 ohm",
+	                            "1k ohm", "1.2k ohm", "1.5k ohm", "1.8k ohm", "2.2k ohm", "2.7k ohm",
+	                            "3.3k ohm", "3.9k ohm", "4.7k ohm", "5.6k ohm", "6.8k ohm", "8.2k ohm",
+	                            "10k ohm", "12k ohm", "15k ohm", "18k ohm", "22k ohm", "27k ohm", "33k ohm",
+	                            "39k ohm", "47k ohm", "56k ohm", "68k ohm", "75k ohm", "82k ohm",
+	                            "100k ohm", "120k ohm", "150k ohm", "180k ohm", "220k ohm", "270k ohm",
+	                            "330k ohm", "390k ohm", "470k ohm", "560k ohm", "680k ohm", "820k ohm",
+	                            "1M ohm","4.7M ohm","10M ohm", "22M ohm"
+	                           };
 
-    // 3. LEDs
-    vector<string> LEDs = {"white LED", "red LED", "green LED", "yellow LED"};
-    
-    vector<int> Lstock = {62, 370, 102, 73};
+	vector<int> Rstock = {64, 98, 98, 100, 82, 100, 87, 90, 98, 91, 93, 81,
+	                      59, 95, 83, 87, 91, 82, 261, 79, 143, 23, 81, 75, 24, 18, 519, 450, 31, 26,
+	                      459, 214, 595, 23, 357, 359, 266, 26, 35, 43, 390, 62, 255, 353, 291, 306,
+	                      103, 428, 275, 225, 194, 223, 64, 71, 1, 279, 350, 87, 118, 92, 295, 93, 86,
+	                      114, 82, 253, 92, 169, 90, 75, 90, 386, 75, 216, 94, 103, 92, 92, 1, 7, 37
+	                     };
 
-    // 4. IC Chips
-    vector<string> icChips = {"ic chip 7409", "ic chip 4001", "ic chip 4017",
-    "ic chip 4029", "ic chip 74157", "ic chip 9526", "ic chip 7420", 
-    "ic chip 74595", "ic chip 7719", "ic chip 4511", "ic chip 9525", 
-    "ic chip 74151", "ic chip 74193", "ic chip 4011", "ic chip 7488", 
-    "ic chip 7489", "ic chip 7402", "ic chip 7411", "ic chip 7409", 
-    "ic chip 7490", "ic chip 9226", "ic chip 7414", "ic chip 7400", 
-    "ic chip 7408", "ic chip 7402", "ic chip 74147", "ic chip 74037", 
-    "ic chip 7432", "ic chip 7486", "ic chip 7451", "ic chip MH7489", 
-    "ic chip 7932", "ic chip 7485", "ic chip 74138", "ic chip 7474", 
-    "ic chip 74154", "ic chip 74125", "ic chip 74190", "ic chip 7430", 
-    "ic chip 74191", "ic chip 74107", "ic chip 74192", "ic chip 74148", 
-    "ic chip 7495", "ic chip 7447", "ic chip 7442", "ic chip 74121", 
-    "ic chip 7475", "ic chip 74163", "ic chip 74150", "ic chip 74164"};
-    
-    vector<int> ICstock = {7, 5, 8, 2, 3, 3, 2, 1, 4, 2, 5, 1, 2, 8, 1, 26, 89, 
-    84, 7, 9, 3, 146, 77, 4, 9, 14, 28, 42, 89, 27, 197, 75, 70, 33, 47, 84, 25,
-    42, 74, 74, 56, 283, 64, 69, 30, 3, 51, 47, 22, 30, 136};
+	// Category 2: Capacitors
+	vector<string> capacitors = {"474k Radial", "105K Radial", "102K Radial",
+	                             "224K Radial", "104K Radial", "473K Radial", "103K Radial", "101K Radial",
+	                             ".1 J Radial", ".47 Micro F", "1 Micro F", "220 Micro F", "4.7 Micro F  Ax",
+	                             "4.7 Micro F","330 Micro F","470 Micro F","22 Micro F", "10 Micro F",
+	                             "4700 Micro F", "47 Micro F", "1000 Micro F", "2200 Micro F",
+	                             "100 Micro F Ax", "33 Micro F", "100 Micro F"
+	                            };
 
-    // 5. Potentiometers
-    vector<string> potentiometers = {"1k ohm pot", "5k ohm pot", "50k ohm pot", 
-    "100k ohm pot", "1M ohm pot", "2M ohm pot"};
-    
-    vector<int> Pstock = {1, 6, 1, 11, 1, 1,};
+	vector<int> Cstock = {25, 91, 149, 7, 2, 14, 14, 2, 2, 379, 203, 17, 111,
+	                      253, 0, 47, 946, 700, 0, 481, 31, 38, 2, 308, 271
+	                     };
 
-    // 6. Inductors
-    vector<string> inductors = {"10 uH", "22uH", "47uH", "220uH", "1 mH", 
-    "2.2 mH", "4.7 mH", "10 mH", "22 mH", "33 mH", "47 mH", "100 mH"};
-    
-    vector<int> Hstock = {81, 88, 90, 60, 48, 42, 45, 33, 64, 50, 59, 76};
+	// Category 3: LEDs
+	vector<string> LEDs = {"white LED", "red LED", "green LED", "yellow LED"};
 
-    // 7. Buttons and Switches
-    vector<string> BandS = {"button", "8 prong", "4 prong", "3 prong", "2 prong"};
-    vector<int> BSstock = {4, 1, 2, 10, 1};
+	vector<int> Lstock = {62, 370, 102, 73};
 
-    // 8. Batteries
-    vector<string> batteries = {"9 V", "1.5 V"};
-    vector<int> Bstock = {6, 3};
+	// Category 4: IC Chips
+	vector<string> icChips = {"ic chip 7409", "ic chip 4001", "ic chip 4017",
+	                          "ic chip 4029", "ic chip 74157", "ic chip 9526", "ic chip 7420",
+	                          "ic chip 74595", "ic chip 7719", "ic chip 4511", "ic chip 9525",
+	                          "ic chip 74151", "ic chip 74193", "ic chip 4011", "ic chip 7488",
+	                          "ic chip 7489", "ic chip 7402", "ic chip 7411", "ic chip 7409",
+	                          "ic chip 7490", "ic chip 9226", "ic chip 7414", "ic chip 7400",
+	                          "ic chip 7408", "ic chip 7402", "ic chip 74147", "ic chip 74037",
+	                          "ic chip 7432", "ic chip 7486", "ic chip 7451", "ic chip MH7489",
+	                          "ic chip 7932", "ic chip 7485", "ic chip 74138", "ic chip 7474",
+	                          "ic chip 74154", "ic chip 74125", "ic chip 74190", "ic chip 7430",
+	                          "ic chip 74191", "ic chip 74107", "ic chip 74192", "ic chip 74148",
+	                          "ic chip 7495", "ic chip 7447", "ic chip 7442", "ic chip 74121",
+	                          "ic chip 7475", "ic chip 74163", "ic chip 74150", "ic chip 74164"
+	                         };
 
-    // 9. Breadboards
-    vector<string> breadboards = {"breadboard"};
-    vector<int> BRstock = {16};
+	vector<int> ICstock = {7, 5, 8, 2, 3, 3, 2, 1, 4, 2, 5, 1, 2, 8, 1, 26, 89,
+	                       84, 7, 9, 3, 146, 77, 4, 9, 14, 28, 42, 89, 27, 197, 75, 70, 33, 47, 84, 25,
+	                       42, 74, 74, 56, 283, 64, 69, 30, 3, 51, 47, 22, 30, 136
+	                      };
 
-    while (true) {
-        intro(menuInput);
-        if (menuInput == 1) {
-            inventoryFull(resistors, Rstock, capacitors, Cstock, LEDs, Lstock, icChips, ICstock, potentiometers, Pstock, inductors, Hstock, BandS, BSstock, batteries, Bstock, breadboards, BRstock);
-        } else if (menuInput == 2) {
-            kioskSystem(resistors, Rstock, capacitors, Cstock, LEDs, Lstock, icChips, ICstock, potentiometers, Pstock, inductors, Hstock, BandS, BSstock, batteries, Bstock, breadboards, BRstock);
-        } else if (menuInput == 0) {
-            cout << "Exiting system. Goodbye!" << endl;
-            break;
-        } else {
-            cout << "Invalid selection. Please try again." << endl;
-        }
-    }
-    return 0;
+	// Category 5: Potentiometers
+	vector<string> potentiometers = {"1k ohm pot", "5k ohm pot", "50k ohm pot",
+	                                 "100k ohm pot", "1M ohm pot", "2M ohm pot"
+	                                };
+
+	vector<int> Pstock = {1, 6, 1, 11, 1, 1};
+
+	// Category 6: Inductors
+	vector<string> inductors = {"10 uH", "22uH", "47uH", "220uH", "1 mH",
+	                            "2.2 mH", "4.7 mH", "10 mH", "22 mH", "33 mH", "47 mH", "100 mH"
+	                           };
+
+	vector<int> Hstock = {81, 88, 90, 60, 48, 42, 45, 33, 64, 50, 59, 76};
+
+	// Category 7: Buttons and Switches
+	vector<string> BandS = {"button", "8 prong", "4 prong", "3 prong", "2 prong"};
+	vector<int> BSstock = {4, 1, 2, 10, 1};
+
+	// Category 8: Batteries
+	vector<string> batteries = {"9 V", "1.5 V"};
+	vector<int> Bstock = {6, 3};
+
+	// Category 9: Breadboards
+	vector<string> breadboards = {"breadboard"};
+	vector<int> BRstock = {16};
+
+	while (true) {
+		intro(menuInput);
+		if (menuInput == 1) {
+			inventoryFull(resistors, Rstock, capacitors, Cstock, LEDs, Lstock, icChips, ICstock, potentiometers, Pstock, inductors, Hstock, BandS, BSstock, batteries, Bstock, breadboards, BRstock);
+		} else if (menuInput == 2) {
+			kioskSystem(resistors, Rstock, capacitors, Cstock, LEDs, Lstock, icChips, ICstock, potentiometers, Pstock, inductors, Hstock, BandS, BSstock, batteries, Bstock, breadboards, BRstock);
+		} else if (menuInput == 0) {
+			cout << "Exiting system. Goodbye!" << endl;
+			break;
+		} else {
+			cout << "Invalid selection. Please try again." << endl;
+		}
+	}
+	return 0;
 }
 
 void intro(int& menuInput) {
-    cout << "\n===============================" << endl;
-    cout << "      COMPONENT KIOSK" << endl;
-    cout << "===============================" << endl;
-    cout << "1. See full inventory" << endl;
-    cout << "2. Check-out/Check-in parts" << endl;
-    cout << "0. Exit" << endl;
-    cout << "Selection: ";
-    cin >> menuInput;
+	cout << "\n===============================" << endl;
+	cout << "      COMPONENT KIOSK" << endl;
+	cout << "===============================" << endl;
+	cout << "1. See full inventory" << endl;
+	cout << "2. Check-out/Check-in parts" << endl;
+	cout << "0. Exit" << endl;
+	cout << "Selection: ";
+	cin >> menuInput;
 }
 
-void inventoryFull(const vector<string>& rLabels, const vector<int>& rStock, 
+void inventoryFull(const vector<string>& rLabels, const vector<int>& rStock,
                    const vector<string>& cLabels, const vector<int>& cStock,
                    const vector<string>& lLabels, const vector<int>& lStock,
                    const vector<string>& icLabels, const vector<int>& icStock,
@@ -159,38 +163,81 @@ void inventoryFull(const vector<string>& rLabels, const vector<int>& rStock,
                    const vector<string>& bsLabels, const vector<int>& bsStock,
                    const vector<string>& bLabels, const vector<int>& bStock,
                    const vector<string>& brLabels, const vector<int>& brStock) {
-    int choice;
-    cout << "\nChoose category to view:" << endl;
-    cout << "1. Resistors\n2. Capacitors\n3. LEDs\n4. IC Chips\n5. Potentiometers\n6. Inductors\n7. Buttons/Switches\n8. Batteries\n9. Breadboards" << endl;
-    cout << "Selection: ";
-    cin >> choice;
+	int choice;
+	cout << "\nChoose category to view:" << endl;
+	cout << "1. Resistors\n2. Capacitors\n3. LEDs\n4. IC Chips\n5. Potentiometers\n6. Inductors\n7. Buttons/Switches\n8. Batteries\n9. Breadboards" << endl;
+	cout << "Selection: ";
+	cin >> choice;
 
-    const vector<string>* labels;
-    const vector<int>* stock;
-    string title;
+	const vector<string>* labels;
+	const vector<int>* stock;
+	string title;
 
-    if (choice == 1) { labels = &rLabels; stock = &rStock; title = "RESISTOR"; }
-    else if (choice == 2) { labels = &cLabels; stock = &cStock; title = "CAPACITOR"; }
-    else if (choice == 3) { labels = &lLabels; stock = &lStock; title = "LED"; }
-    else if (choice == 4) { labels = &icLabels; stock = &icStock; title = "IC CHIP"; }
-    else if (choice == 5) { labels = &pLabels; stock = &pStock; title = "POTENTIOMETER"; }
-    else if (choice == 6) { labels = &iLabels; stock = &iStock; title = "INDUCTOR"; }
-    else if (choice == 7) { labels = &bsLabels; stock = &bsStock; title = "BUTTON/SWITCH"; }
-    else if (choice == 8) { labels = &bLabels; stock = &bStock; title = "BATTERY"; }
-    else if (choice == 9) { labels = &brLabels; stock = &brStock; title = "BREADBOARD"; }
-    else { cout << "Invalid choice." << endl; return; }
+	if (choice == 1) {
+		labels = &rLabels;
+		stock = &rStock;
+		title = "RESISTOR";
+	}
+	else if (choice == 2) {
+		labels = &cLabels;
+		stock = &cStock;
+		title = "CAPACITOR";
+	}
+	else if (choice == 3) {
+		labels = &lLabels;
+		stock = &lStock;
+		title = "LED";
+	}
+	else if (choice == 4) {
+		labels = &icLabels;
+		stock = &icStock;
+		title = "IC CHIP";
+	}
+	else if (choice == 5) {
+		labels = &pLabels;
+		stock = &pStock;
+		title = "POTENTIOMETER";
+	}
+	else if (choice == 6) {
+		labels = &iLabels;
+		stock = &iStock;
+		title = "INDUCTOR";
+	}
+	else if (choice == 7) {
+		labels = &bsLabels;
+		stock = &bsStock;
+		title = "BUTTON/SWITCH";
+	}
+	else if (choice == 8) {
+		labels = &bLabels;
+		stock = &bStock;
+		title = "BATTERY";
+	}
+	else if (choice == 9) {
+		labels = &brLabels;
+		stock = &brStock;
+		title = "BREADBOARD";
+	}
+	else {
+		cout << "Invalid choice." << endl;
+		return;
+	}
 
-//gives the user the introduction to the program
-    cout << "\n--- " << title << " INVENTORY ---" << endl;
-    cout << left << setw(25) << "PART NAME" << "STOCK LEVEL" << endl;
-    cout << "------------------------------------------" << endl;
-    for (size_t i = 0; i < labels->size(); ++i) {
-        cout << left << setw(25) << (*labels)[i] << (*stock)[i] << endl;
-    }
+	// Display selected inventory category in table format
+	cout << "\n--- " << title << " INVENTORY ---" << endl;
+    cout << left << setw(5) << "#"
+         << setw(25) << "PART NAME"
+         << "STOCK LEVEL" << endl;
+	cout << "------------------------------------------" << endl;
+	for (size_t i = 0; i < labels->size(); ++i) {
+        cout << left << setw(5) << i + 1
+             << setw(25) << (*labels)[i]
+             << (*stock)[i] << endl;
+	}
 }
 
-//the kiosk system
-void kioskSystem(const vector<string>& rLabels, vector<int>& rStock, 
+// Handles category selection for inventory transactions
+void kioskSystem(const vector<string>& rLabels, vector<int>& rStock,
                  const vector<string>& cLabels, vector<int>& cStock,
                  const vector<string>& lLabels, vector<int>& lStock,
                  const vector<string>& icLabels, vector<int>& icStock,
@@ -199,65 +246,97 @@ void kioskSystem(const vector<string>& rLabels, vector<int>& rStock,
                  const vector<string>& bsLabels, vector<int>& bsStock,
                  const vector<string>& bLabels, vector<int>& bStock,
                  const vector<string>& brLabels, vector<int>& brStock) {
-    int category;
-    cout << "\nTransaction - Select Category:" << endl;
-    cout << "1. Resistors\n2. Capacitors\n3. LEDs\n4. IC Chips\n5. Potentiometers\n6. Inductors\n7. Buttons/Switches\n8. Batteries\n9. Breadboards" << endl;
-    cout << "Selection: ";
-    cin >> category;
+	int category;
+	cout << "\nTransaction - Select Category:" << endl;
+	cout << "1. Resistors\n2. Capacitors\n3. LEDs\n4. IC Chips\n5. Potentiometers\n6. Inductors\n7. Buttons/Switches\n8. Batteries\n9. Breadboards" << endl;
+	cout << "Selection: ";
+	cin >> category;
 
-//allow the user to select a category 
-    if (category == 1) processTransaction(rLabels, rStock, "Resistor");
-    else if (category == 2) processTransaction(cLabels, cStock, "Capacitor");
-    else if (category == 3) processTransaction(lLabels, lStock, "LED");
-    else if (category == 4) processTransaction(icLabels, icStock, "IC Chip");
-    else if (category == 5) processTransaction(pLabels, pStock, "Potentiometer");
-    else if (category == 6) processTransaction(iLabels, iStock, "Inductor");
-    else if (category == 7) processTransaction(bsLabels, bsStock, "Button/Switch");
-    else if (category == 8) processTransaction(bLabels, bStock, "Battery");
-    else if (category == 9) processTransaction(brLabels, brStock, "Breadboard");
-    else cout << "Invalid category selection." << endl;  //user can’t select a category that doesn’t apply
+	// Direct user to the selected inventory category
+	if (category == 1) processTransaction(rLabels, rStock, "Resistor");
+	else if (category == 2) processTransaction(cLabels, cStock, "Capacitor");
+	else if (category == 3) processTransaction(lLabels, lStock, "LED");
+	else if (category == 4) processTransaction(icLabels, icStock, "IC Chip");
+	else if (category == 5) processTransaction(pLabels, pStock, "Potentiometer");
+	else if (category == 6) processTransaction(iLabels, iStock, "Inductor");
+	else if (category == 7) processTransaction(bsLabels, bsStock, "Button/Switch");
+	else if (category == 8) processTransaction(bLabels, bStock, "Battery");
+	else if (category == 9) processTransaction(brLabels, brStock, "Breadboard");
+	else cout << "Invalid category selection." << endl;  // Prevent invalid category selection
 }
 
-//process and edits inventory
+// Process and edits inventory
 void processTransaction(const vector<string>& labels, vector<int>& stock, string typeName) {
-    string partName;
-    int action, quantity;
+	int partChoice;
+	int action, quantity;
 
-//select the most specific part that the user is trying to take out
-    cout << "Enter " << typeName << " name: ";
-    cin.ignore();
-    getline(cin, partName);
+	// Display numbered inventory list
+	cout << "\n--- " << typeName << " LIST ---" << endl;
 
-//search for the part
-    string searchLower = toLower(partName);
-    auto it = find_if(labels.begin(), labels.end(), [&](const string& s) {
-        return toLower(s) == searchLower;
-    });
+	for (size_t i = 0; i < labels.size(); ++i) {
+		cout << setw(3) << i + 1 << ". "
+		     << left << setw(25) << labels[i]
+		     << "Stock: " << stock[i] << endl;
+	}
 
-//if the part is found
-    if (it != labels.end()) {
-        int index = distance(labels.begin(), it);
-        cout << "Part Found: " << *it << " | Current Stock: " << stock[index] << endl;
-        cout << "1. Check-out (Remove)\n2. Check-in (Add)\nSelection: "; //does the user want to take something out or return something
-        cin >> action; 
-        cout << "Enter quantity: "; //asks the user for how many parts are being returned or taken
-        cin >> quantity;
+	// Ask user to select part number
+	cout << "\nEnter part number: ";
+	cin >> partChoice;
 
-//updates stock after user takes a part
-        if (action == 1) {
-            if (stock[index] >= quantity) {
-                stock[index] -= quantity;
-                cout << "Success! New stock: " << stock[index] << endl; //updates stock
-            } else {
-                cout << "Error: Insufficient stock available." << endl; //tells the user we’re out
-            }
-        } else if (action == 2) {
-            stock[index] += quantity;
-            cout << "Success! New stock: " << stock[index] << endl;
-        } else {
-            cout << "Invalid action." << endl;
-        }
-    } else {
-        cout << "Part '" << partName << "' not found." << endl; //tells the user that they gave an invalid part name
-    }
+	// Validate selection
+	if (partChoice < 1 || partChoice > labels.size()) {
+		cout << "Invalid part selection." << endl;
+		return;
+	}
+
+	// Convert user selection to vector index
+	int index = partChoice - 1;
+
+	cout << "\nSelected Part: " << labels[index]
+	     << "\nCurrent Stock: " << stock[index] << endl;
+
+	// Ask transaction type
+	cout << "\n1. Check-out (Remove)"
+	     << "\n2. Check-in (Add)"
+	     << "\nSelection: ";
+	cin >> action;
+
+	// Ask quantity
+	cout << "Enter quantity: ";
+	cin >> quantity;
+
+	// Validate quantity
+	if (quantity <= 0) {
+		cout << "Invalid quantity." << endl;
+		return;
+	}
+
+	// Check-out
+	if (action == 1) {
+
+		if (stock[index] >= quantity) {
+			stock[index] -= quantity;
+
+			cout << "Success! New stock: "
+			     << stock[index] << endl;
+		}
+		else {
+			cout << "Error: Insufficient stock available." << endl;
+		}
+
+	}
+
+	// Check-in
+	else if (action == 2) {
+
+		stock[index] += quantity;
+
+		cout << "Success! New stock: "
+		     << stock[index] << endl;
+	}
+
+	// Invalid action
+	else {
+		cout << "Invalid action." << endl;
+	}
 }
