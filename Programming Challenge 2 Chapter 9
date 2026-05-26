@@ -1,0 +1,43 @@
+#include <iostream>
+using namespace std;
+
+// Array definition
+int* Array(int numbers) {
+    int* arrayPtr = new int[numbers];
+    return arrayPtr;
+}
+
+// Function that returns the average of an array
+double average(int a[], int n) {
+    if (n == 0) return 0; // handle empty array
+    int sum = 0;
+    for (int i = 0; i < n; i++)
+        sum += a[i];
+    return (double)sum / n;
+}
+
+// Driver code
+int main() {
+    int size;
+    cout << "Enter the size of the array: ";
+    cin >> size;
+
+    int* DynamicArray = Array(size);
+
+    // User inputs the values
+    cout << "Enter " << size << " numbers: ";
+    for (int i = 0; i < size; i++) {
+        cin >> DynamicArray[i];
+    }
+
+    // Calculate and display the average
+    double avg = average(DynamicArray, size);
+    cout << "The average is: " << avg << endl;
+
+    // Free the dynamically allocated memory
+    delete[] DynamicArray;
+
+    return 0;
+}
+
+
