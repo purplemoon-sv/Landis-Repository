@@ -19,7 +19,7 @@ double average(int a[], int n) {
 // Driver code
 int main() {
     int size;
-    cout << "Enter the size of the array: ";
+    cout << "Enter the how many scores there are: ";
     cin >> size;
 
     int* DynamicArray = Array(size);
@@ -32,7 +32,7 @@ int main() {
 
     // Calculate and display the average
     double avg = average(DynamicArray, size);
-    cout << "The average is: " << avg << endl;
+    cout << "The average score is: " << avg << endl;
 
     // Free the dynamically allocated memory
     delete[] DynamicArray;
