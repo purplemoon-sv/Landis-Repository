@@ -1,0 +1,30 @@
+#include <iostream>
+using namespace std;
+
+// Array definition 
+int* Array(int numbers) {
+    int* arrayPtr = new int[numbers];
+    return arrayPtr;
+}
+
+int main() {
+    int size;
+
+    // User inputs the number of elements in the array
+    cout << "Enter the size of the array: ";
+    cin >> size;
+
+    // Relates the values of the original array to the new dynamic array
+    int* DynamicArray = Array(size);
+
+    // Stores and outputs the number of elements to numbers themselves
+    for (int i = 0; i < size; i++) {
+        DynamicArray[i] = (i + 1);
+        cout << DynamicArray[i] << " ";
+    }
+    cout << endl;
+    
+    delete[] DynamicArray;
+    
+    return 0;
+}
