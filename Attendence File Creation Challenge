@@ -1,0 +1,105 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+void trackAttendance(ofstream& file, const vector<string>& names);
+void readFile(const string& filename);
+int getValidInt(const string& prompt, int minVal, int maxVal);
+
+int main() {
+    // Change types to int for numerical validation
+    int month = getValidInt("Enter the month (1-12): ", 1, 12);
+    int day = getValidInt("Enter the day (1-31): ", 1, 31);
+    int year = getValidInt("Enter the year (e.g., 2026): ", 1000, 9999);
+
+    // Convert ints back to strings and combine them for the filename
+    string filename = to_string(month) + "-" + to_string(day) + "-" + to_string(year) + ".txt";
+
+    // Open the file to WRITE attendance
+    ofstream MyFile(filename);
+    if (!MyFile) {
+        cerr << "Error creating file!" << endl;
+        return 1;
+    }
+
+    vector<string> students = {"Envy", "Ilyas", "Damon", "Hamir", "Bode", "George", "Jordan", "Chris", "Caleb", "Seth", "Ryan", "Tiahna", "Bailin", "Elijah", "Connor"};
+
+    trackAttendance(MyFile, students);
+    MyFile.close(); // Close the write stream so the data is saved
+
+    cout << "Attendance successfully saved to " << filename << endl << endl;
+
+    // Open the file to READ and display it in the compiler console
+    readFile(filename);
+
+    return 0;
+}
+
+// Helper function to handle integer input validation
+int getValidInt(const string& prompt, int minVal, int maxVal) {
+    int value;
+    while (true) {
+        cout << prompt;
+        cin >> value;
+
+        // Check if input is an integer and within the correct range
+        if (cin.fail() || value < minVal || value > maxVal) {
+            cout << "Invalid input! Please enter a valid number between " << minVal << " and " << maxVal << "." << endl;
+            cin.clear(); // Clear the error flag on cin
+            cin.ignore(10000, '\n'); // Discard invalid characters from the buffer
+        } else {
+            cin.ignore(10000, '\n'); // Clear any extra text after the valid integer
+            return value;
+        }
+    }
+}
+
+// Function to track attendance and save it to the file with strict validation
+void trackAttendance(ofstream& file, const vector<string>& names) {
+    char status;
+    file << "--- Attendance Log ---" << endl;
+
+    for (const string& name : names) {
+        while (true) {
+            cout << "Is " << name << " present? (y/n): ";
+            cin >> status;
+
+            // Check if input failed or if the character is invalid
+            if (cin.fail() || (status != 'y' && status != 'Y' && status != 'n' && status != 'N')) {
+                cout << "Invalid choice! Please enter 'y' for present or 'n' for absent." << endl;
+                cin.clear();
+                cin.ignore(10000, '\n'); // Clear out the bad input line
+            } else {
+                cin.ignore(10000, '\n'); // Clear the rest of the stream buffer
+                break; // Break the infinite while loop since input is valid
+            }
+        }
+
+        // Write to file based on verified status
+        if (status == 'y' || status == 'Y') {
+            file << name << ": Present" << endl;
+        } else {
+            file << name << ": Absent" << endl;
+        }
+    }
+}
+
+// Function to read and print the file contents
+void readFile(const string& filename) {
+    ifstream reader(filename); // Open the file for reading
+    if (!reader) {
+        cerr << "Error opening file for reading!" << endl;
+        return;
+    }
+
+    string line;
+    cout << "=== Reading File Contents ===" << endl;
+    while (getline(reader, line)) {
+        cout << line << endl;
+    }
+    cout << "=============================" << endl;
+    reader.close(); // Close the read stream
+}
